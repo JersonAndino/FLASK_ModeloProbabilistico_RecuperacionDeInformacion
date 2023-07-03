@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<form method="POST">
+    
+</form>
+<form method="POST" enctype="multipart/form-data">
+    <br>
+    <div>
+        <label for="texto">Introducir texto:</label>
+        <input type="text" id="texto" name="texto" class="form-control">
+    </div>
+    <br>
+    <div>
+        <label for="documento">Cargar documento:</label>
+        <input type="file" id="documento" name="documento" accept=".txt" class="form-control">
+    </div>
+    <br>
+    <input type="submit" value="Cargar documento">
+</form>
+{% endblock %}

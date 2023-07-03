@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Bienvenido a la aplicación de recuperación de la información</h1>
+<!--<p>Aquí puedes cargar documentos, calcular frecuencias y relevancias y consultar documentos similares.</p>-->
+<div>
+    <div class="m-auto" style="padding:50px; margin:auto;">
+        <form method="POST" enctype="multipart/form-data">
+            <input type="hidden" value="3" id="tipo_post" name="tipo_post">
+            <br>
+            <div>
+                <label for="consulta">Realizar consulta:</label>
+                <input style="width: 200px;" type="text" id="consulta" name="consulta" class="form-control">
+            </div>
+            <br>
+            <input class="btn btn-primary" type="submit" value="Buscar">
+        </form>
+        <br>
+        {%if not_ready:%}
+        <div class="card">
+            <h4>No existe informacion suficiente para realizar una consulta</h4>
+        </div>
+        {%endif%}
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <div style="padding:50px;">
+            <h3>CARGAR DOCUMENTOS</h3>
+            <form method="POST" enctype="multipart/form-data">
+                <input type="hidden" value="0" id="tipo_post" name="tipo_post">
+                <br>
+                <div>
+                    <label for="texto">Introducir texto:</label>
+                    <input style="width: 200px;" type="text" id="texto" name="texto" class="form-control">
+                </div>
+                <br>
+                <div>
+                    <label for="documento">Cargar documento:</label>
+                    <input style="width: 300px;" type="file" id="documento" name="documento" accept=".txt" class="form-control">
+                </div>
+                <br>
+                <input type="submit" value="Cargar documento">
+            </form>
+        </div>
+    </div>    
+    <div class="col-md-6">
+        <div style="padding:50px;">
+            <h3>
+                DOCUMENTOS
+            </h3>
+            {%if ed == 0:%}
+            <h4>No hay documentos cargados</h4>
+            {% else %}
+                {%for doc in docs%}
+                <p style="border: 1px solid black; margin: 20px; padding:10px; border-radius: px; width: 400px; margin-top: 2px; margin-bottom:2px;">{{doc}}</p>
+                <form method="POST" enctype="multipart/form-data">
+                    <div>
+                        <input type="hidden" value="{{loop.index}}" id="doc_index" name="doc_index">
+                        <input type="hidden" value="1" id="tipo_post" name="tipo_post">
+                    </div>
+                    <button><i class="fa-solid fa-trash"></i></button>
+                </form>
+                {%endfor%}
+                <form method="POST" enctype="multipart/form-data">
+                    <div>
+                        <input type="hidden" value="2" id="tipo_post" name="tipo_post">
+                    </div>
+                    <button>Limpiar</button>
+                </form>
+            </div>
+            {% endif %}
+    </div>
+    <div class="col-md-6">
+        <div style="padding:50px;">
+            <h3>TABLA DE FRECUENCIAS</h3>
+            {%if V:%}
+            <table>
+                <thead>
+                    <th style="border: 1px solid black;
+                        padding: 8px;
+                        text-align: left;"></th>
+                    {%for w in V:%}
+                        <th style="border: 1px solid black;
+                        padding: 8px;
+                        text-align: left;">{{w}}</th>
+                    {%endfor%}
+                </thead>
+                <tbody>
+                    {%for d in frecuencias:%}
+                    <tr>
+                        <th style="border: 1px solid black;
+                        padding: 8px;
+                        text-align: left;">d{{loop.index}}</th>
+                        {%for f in d:%}
+                        <td style="border: 1px solid black;
+                            padding: 8px;
+                            text-align: left;">{{f}}</td>
+                        {%endfor%}                        
+                    </tr>
+                    {%endfor%}
+                    <tr>
+                        <th style="border: 1px solid black;
+                        padding: 8px;
+                        text-align: left;">ni</th>
+                        {%for f in ni:%}
+                        <td style="border: 1px solid black;
+                            padding: 8px;
+                            text-align: left;">{{f}}</td>
+                        {%endfor%}
+                    </tr>
+                </tbody>
+            </table>
+            {%else:%}
+            <h4>NO HAY</h4>
+            {%endif%}
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div style="padding:50px;">
+            <h3>TABLA DE PESOS</h3>
+            {%if tabla_pesos:%}
+            <table>
+                <thead>
+                    <th style="border: 1px solid black;
+                        padding: 8px;
+                        text-align: left;">Palabra</th>
+                    <th style="border: 1px solid black;
+                        padding: 8px;
+                        text-align: left;">t</th>
+                    <th style="border: 1px solid black;
+                        padding: 8px;
+                        text-align: left;">ni</th>
+                    <th style="border: 1px solid black;
+                        padding: 8px;
+                        text-align: left;">qi</th>
+                    <th style="border: 1px solid black;
+                        padding: 8px;
+                        text-align: left;">ci</th>
+                </thead>
+                <tbody>
+                    {%for r in tabla_pesos:%}
+                    <tr>
+                        {%for el in r:%}
+                        <td style="border: 1px solid black;
+                            padding: 8px;
+                            text-align: left;">{{el}}</td>
+                        {%endfor%}
+                    </tr>
+                    {%endfor%}
+                </tbody>
+            </table>
+            {%else:%}
+            <h4>NO HAY</h4>
+            {%endif%}
+        </div>
+    </div>
+    {%if sim:%}
+    <div class="col-md-6">
+        <div style="padding:50px;">
+            <h3>TABLA DE SIMILITUD</h3>
+            <table>
+                <thead>
+                    <th style="border: 1px solid black;
+                        padding: 8px;
+                        text-align: left;"></th>
+                    <th style="border: 1px solid black;
+                        padding: 8px;
+                        text-align: left;">sim</th>
+                </thead>
+                <tbody>
+                    {%for s in sim:%}
+                    <tr>
+                        <th style="border: 1px solid black;
+                        padding: 8px;
+                        text-align: left;">d{{loop.index}}</th>
+                        
+                        <td style="border: 1px solid black;
+                            padding: 8px;
+                            text-align: left;">{{s}}</td>
+                    </tr>
+                    {%endfor%}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div style="padding:50px;">
+            <h3>NUEVO ORDEN</h3>
+            <table>
+                <thead>
+                    <th style="border: 1px solid black;
+                        padding: 8px;
+                        text-align: left;">Nuevo orden</th>
+                </thead>
+                <tbody>
+                    {%for p in orden_docs:%}
+                    <tr>
+                        <th style="border: 1px solid black;
+                        padding: 8px;
+                        text-align: left;">d{{p+1}}</th>
+                    </tr>
+                    {%endfor%}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {%endif%}
+</div>
+
+<!-- Botones para las otras rutas -->
+<!--
+<a href="{{ url_for('cargar_documento') }}"><button>Cargar Documento</button></a>
+<a href="{{ url_for('calcular') }}"><button>Calcular Frecuencias y Relevancias</button></a>
+<a href="{{ url_for('consultar') }}"><button>Realizar Consulta</button></a>
+-->
+<br>
+
+{% endblock %}
