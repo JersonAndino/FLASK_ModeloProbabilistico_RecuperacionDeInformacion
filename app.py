@@ -26,7 +26,12 @@ qi=[]
 ci=[]
 
 def limpiar_doc(documento):
-    return documento.split()
+    documento=documento.lower()
+    doc = documento.split()
+    for i,word in enumerate(doc):
+        if word.lower() in stop_words:
+            doc.pop(i)
+    return doc
 
 def vectorizar(documento,V):
     q_v=[]
@@ -138,6 +143,8 @@ def consultar_q(frecuencias, ci, q):
     D4=[]    
     for d in D3:
         d_temp=[]
+        print(d)
+        print(ci)
         for i in range(n):
             d_temp.append(d[i]*ci[i])
         D4.append(d_temp)  
