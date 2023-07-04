@@ -36,7 +36,8 @@ def vectorizar(documento,V):
         else:
             q_v.append(0)
     return q_v
-
+##############################################
+# Calcular
 def calcular_v(documentos_limpios):
     V.clear()
     if documentos_limpios:
@@ -109,7 +110,7 @@ def calcular_tabla(documentos):
         print(e)
         pass
     return tabla_pesos
-
+###################################################3
 def ordenar_sim(sim):
     orden=list(range(len(sim)))
     nuevo_orden=[]
@@ -204,14 +205,7 @@ def cargar_documento():
             index_doc = int(request.form['doc_index'])
             documentos.pop(index_doc-1)
             documentos_limpios.pop(index_doc-1)
-            try:
-                calcular_v(documentos_limpios)
-                calcular_frecuencias(documentos_limpios,V)
-                calcular_ni(frecuencias,V)
-                calcular_qi(ni)
-                calcular_ci(ni)
-            except Exception as e:
-                pass
+            
         if request.form['tipo_post']=='2':
             documentos.clear()
             documentos_limpios.clear()
