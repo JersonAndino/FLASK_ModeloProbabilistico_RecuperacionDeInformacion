@@ -6,16 +6,9 @@
 from flask import Flask, request, render_template
 from werkzeug.utils import secure_filename
 import os
-# import nltk
-# from nltk.corpus import stopwords
-# from nltk.tokenize import word_tokenize
-# from collections import Counter
 from math import log
 import time
 
-
-# nltk.download('punkt')
-# nltk.download('stopwords')
 
 # Crear la carpeta 'uploaded_files' si no existe
 if not os.path.exists('uploaded_files'):
@@ -89,15 +82,9 @@ def calcular_qi(ni):
         
 def calcular_ci(ni):
     ci.clear()
-    N=len(documentos)
-    
+    N=len(documentos)    
     for n in ni:
-        # r=log((N-n)/n,10)
-        # print(N)
-        # print(n)
         ci.append(log((N-n)/n,10))
-        # ci.append(10)
-    # print(ci)
     
 def calcular_tabla(documentos):
     tabla_pesos=[]
@@ -157,15 +144,12 @@ def consultar_q(frecuencias, ci, q):
     for d in D4:
         sim.append(abs(sum(d)))
     sim_copy=sim.copy()    
-    return (sim, ordenar_sim(sim_copy))
-        
+    return (sim, ordenar_sim(sim_copy))      
     
-
 @app.route('/', methods=['GET', 'POST'])
 def home():
     content = dict()
     if request.method == 'POST':
-        # print(request.form)
         if request.form['tipo_post']=='3':
             if not ci:
                 content['not_ready']=True
@@ -220,11 +204,21 @@ def cargar_documento():
             index_doc = int(request.form['doc_index'])
             documentos.pop(index_doc-1)
             documentos_limpios.pop(index_doc-1)
-            # print(documentos)
-            # print(index_doc)
+            try:
+                calcular_v(documentos_limpios)
+                calcular_frecuencias(documentos_limpios,V)
+                calcular_ni(frecuencias,V)
+                calcular_qi(ni)
+                calcular_ci(ni)
+            except Exception as e:
+                pass
         if request.form['tipo_post']=='2':
             documentos.clear()
             documentos_limpios.clear()
+            ci.clear()
+            V.clear()
+            ni.clear()
+            qi.clear()
     
     content['ed']=len(documentos)
     content['docs']=documentos
@@ -235,9 +229,6 @@ def cargar_documento():
 @app.route('/calcular', methods=['GET'])
 def calcular():
     content = dict()
-    calcular_v(documentos_limpios)
-    calcular_frecuencias(documentos_limpios,V)
-    calcular_ni(frecuencias,V)
     tabla_pesos = calcular_tabla(documentos)
     content['ed']=len(documentos)
     content['docs']=documentos
@@ -245,17 +236,7 @@ def calcular():
     content['frecuencias']=frecuencias
     content['ni']=ni
     content['tabla_pesos']=tabla_pesos
-    # tu código para calcular las frecuencias y relevancias va aquí
     return render_template('calcular.html', **content)
-
-@app.route('/consultar', methods=['GET', 'POST'])
-def consultar():
-    consulta = None
-    if request.method == 'POST':
-        consulta = request.form['consulta']
-        # tu código para consultar documentos va aquí
-    return render_template('consultar.html', consulta=consulta)
-
 
 if __name__ == '__main__':
     app.run(debug=True)
