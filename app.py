@@ -44,16 +44,6 @@ def vectorizar(documento,V):
             q_v.append(0)
     return q_v
 
-def limpiar_texto(documentos):
-    documentos_limpios=[]
-    for d in documentos:
-        d_temp=d.split()
-        documentos_limpios.append(d_temp)
-    # print(documentos_limpios)
-    for d in documentos_limpios:
-        print(d)
-    return documentos_limpios
-
 def calcular_v(documentos_limpios):
     V.clear()
     if documentos_limpios:
@@ -176,6 +166,36 @@ def home():
     content = dict()
     if request.method == 'POST':
         # print(request.form)
+        if request.form['tipo_post']=='3':
+            if not ci:
+                content['not_ready']=True
+            else:
+                consulta=request.form['consulta']
+                q=vectorizar(limpiar_doc(consulta),V)
+                inicio = time.time()
+                (sim, orden_docs) = consultar_q(frecuencias,ci,q)
+                fin = time.time()-inicio
+                content['sim']=sim
+                content['orden_docs']=orden_docs                
+            
+    calcular_v(documentos_limpios)
+    calcular_frecuencias(documentos_limpios,V)
+    calcular_ni(frecuencias,V)
+    tabla_pesos = calcular_tabla(documentos)
+    content['ed']=len(documentos)
+    content['docs']=documentos
+    content['V']=V
+    content['frecuencias']=frecuencias
+    content['ni']=ni
+    content['tabla_pesos']=tabla_pesos
+            
+    return render_template('inicio.html',**content)
+
+@app.route('/cargar_documento', methods=['GET', 'POST'])
+def cargar_documento():
+    content=dict()
+    if request.method == 'POST':
+        # print(request.form)
         if request.form['tipo_post']=='0':
             if request.files['documento']:
                 f = request.files['documento']
@@ -200,22 +220,16 @@ def home():
         if request.form['tipo_post']=='2':
             documentos.clear()
             documentos_limpios.clear()
-        if request.form['tipo_post']=='3':
-            if not ci:
-                content['not_ready']=True
-            else:
-                consulta=request.form['consulta']
-                q=vectorizar(limpiar_doc(consulta),V)
-                inicio = time.time()
-                (sim, orden_docs) = consultar_q(frecuencias,ci,q)
-                fin = time.time()-inicio
-                print(fin)
-                print(sim)
-                print(orden_docs)
-                content['sim']=sim
-                content['orden_docs']=orden_docs
-                
-            
+    
+    content['ed']=len(documentos)
+    content['docs']=documentos
+    content['V']=V
+    
+    return render_template('cargar_documento.html', **content)
+
+@app.route('/calcular', methods=['GET'])
+def calcular():
+    content = dict()
     calcular_v(documentos_limpios)
     calcular_frecuencias(documentos_limpios,V)
     calcular_ni(frecuencias,V)
@@ -226,32 +240,8 @@ def home():
     content['frecuencias']=frecuencias
     content['ni']=ni
     content['tabla_pesos']=tabla_pesos
-            
-    return render_template('inicio.html',**content)
-
-@app.route('/cargar_documento', methods=['GET', 'POST'])
-def cargar_documento():
-    content={'nombre':'Jerson', 'apellido':'Andino'}
-    if request.method == 'POST':
-        # print(request.form)
-        if request.files['documento']:
-            f = request.files['documento']
-            filename = secure_filename(f.filename)
-            file_path=os.path.join('uploaded_files', filename)
-            f.save(file_path)
-            file=open(file_path)
-            doc = file.read()
-            file.close()
-            documentos.append(doc)
-        else:
-            if request.form['texto']:
-                documentos.append(request.form['texto'])
-    return render_template('cargar_documento.html')
-
-@app.route('/calcular', methods=['GET'])
-def calcular():
     # tu código para calcular las frecuencias y relevancias va aquí
-    return render_template('calcular.html')
+    return render_template('calcular.html', **content)
 
 @app.route('/consultar', methods=['GET', 'POST'])
 def consultar():

@@ -5,6 +5,15 @@ body {
     background-color: #f4f4f4;
 }
 
+.box-doc{
+    border: 1px solid rgb(66, 66, 66);
+    border-radius: 10px;
+    border-right: 0;
+    margin-top: 10px;
+}
+.box-doc p{
+    padding:10px;
+}
 .container {
     width: 80%;
     margin: auto;
