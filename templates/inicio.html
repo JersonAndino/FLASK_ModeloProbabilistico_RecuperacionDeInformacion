@@ -160,28 +160,22 @@
     </div>
     -->
     {%if sim:%}
+    <h4 class="text-center">Resultados para la consulta: "{{consulta}}"</h4>
+    <h5 class="text-center">Tiempo de respuesta: {{tiempo}} nanosegundos</h5>
     <div class="col-md-6">
         <div style="padding:50px;">
             <h3>TABLA DE SIMILITUD</h3>
-            <table>
+            <table class="table table-bordered table-striped">
                 <thead>
-                    <th style="border: 1px solid black;
-                        padding: 8px;
-                        text-align: left;"></th>
-                    <th style="border: 1px solid black;
-                        padding: 8px;
-                        text-align: left;">sim</th>
+                    <th ></th>
+                    <th >sim</th>
                 </thead>
                 <tbody>
                     {%for s in sim:%}
                     <tr>
-                        <th style="border: 1px solid black;
-                        padding: 8px;
-                        text-align: left;">d{{loop.index}}</th>
+                        <th> d{{loop.index}}</th>
                         
-                        <td style="border: 1px solid black;
-                            padding: 8px;
-                            text-align: left;">{{s}}</td>
+                        <td >{{s}}</td>
                     </tr>
                     {%endfor%}
                 </tbody>
@@ -190,19 +184,15 @@
     </div>
     <div class="col-md-6">
         <div style="padding:50px;">
-            <h3>NUEVO ORDEN</h3>
-            <table>
+            <h3>ORDEN DE RELEVANCIA DE DOCUMENTOS</h3>
+            <table class="table table-bordered table-striped">
                 <thead>
-                    <th style="border: 1px solid black;
-                        padding: 8px;
-                        text-align: left;">Nuevo orden</th>
+                    <th >Nuevo orden</th>
                 </thead>
                 <tbody>
                     {%for p in orden_docs:%}
                     <tr>
-                        <th style="border: 1px solid black;
-                        padding: 8px;
-                        text-align: left;">d{{p+1}}</th>
+                        <th> d{{p+1}}</th>
                     </tr>
                     {%endfor%}
                 </tbody>

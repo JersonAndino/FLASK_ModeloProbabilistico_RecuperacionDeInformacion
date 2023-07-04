@@ -172,11 +172,16 @@ def home():
             else:
                 consulta=request.form['consulta']
                 q=vectorizar(limpiar_doc(consulta),V)
-                inicio = time.time()
+                inicio = time.time_ns()
                 (sim, orden_docs) = consultar_q(frecuencias,ci,q)
-                fin = time.time()-inicio
+                fin = time.time_ns()
+                print(inicio)
+                print(fin)
+                print(fin-inicio)
                 content['sim']=sim
-                content['orden_docs']=orden_docs                
+                content['orden_docs']=orden_docs    
+                content['consulta'] = consulta   
+                content['tiempo'] = fin-inicio        
             
     calcular_v(documentos_limpios)
     calcular_frecuencias(documentos_limpios,V)

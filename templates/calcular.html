@@ -3,87 +3,63 @@
 {% block content %}
 <div class="content">
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-8">
                 <div style="padding:50px;">
                     <h3>TABLA DE FRECUENCIAS</h3>
                     {%if V:%}
-                    <table>
+                    <table class="table table-bordered table-striped">
                         <thead>
-                            <th style="border: 1px solid black;
-                                padding: 8px;
-                                text-align: left;"></th>
+                            <th></th>
                             {%for w in V:%}
-                                <th style="border: 1px solid black;
-                                padding: 8px;
-                                text-align: left;">{{w}}</th>
+                                <th >{{w}}</th>
                             {%endfor%}
                         </thead>
                         <tbody>
                             {%for d in frecuencias:%}
                             <tr>
-                                <th style="border: 1px solid black;
-                                padding: 8px;
-                                text-align: left;">d{{loop.index}}</th>
+                                <th >d{{loop.index}}</th>
                                 {%for f in d:%}
-                                <td style="border: 1px solid black;
-                                    padding: 8px;
-                                    text-align: left;">{{f}}</td>
+                                <td >{{f}}</td>
                                 {%endfor%}                        
                             </tr>
                             {%endfor%}
                             <tr>
-                                <th style="border: 1px solid black;
-                                padding: 8px;
-                                text-align: left;">ni</th>
+                                <th >ni</th>
                                 {%for f in ni:%}
-                                <td style="border: 1px solid black;
-                                    padding: 8px;
-                                    text-align: left;">{{f}}</td>
+                                <td >{{f}}</td>
                                 {%endfor%}
                             </tr>
                         </tbody>
                     </table>
                     {%else:%}
-                    <h4>NO HAY</h4>
+                    <h4>No existe informacion suficiente para calcular</h4>
                     {%endif%}
                 </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-8">
                 <div style="padding:50px;">
                     <h3>TABLA DE PESOS</h3>
                     {%if tabla_pesos:%}
-                    <table>
+                    <table class="table table-bordered table-striped">
                         <thead>
-                            <th style="border: 1px solid black;
-                                padding: 8px;
-                                text-align: left;">Palabra</th>
-                            <th style="border: 1px solid black;
-                                padding: 8px;
-                                text-align: left;">t</th>
-                            <th style="border: 1px solid black;
-                                padding: 8px;
-                                text-align: left;">ni</th>
-                            <th style="border: 1px solid black;
-                                padding: 8px;
-                                text-align: left;">qi</th>
-                            <th style="border: 1px solid black;
-                                padding: 8px;
-                                text-align: left;">ci</th>
+                            <th >Palabra</th>
+                            <th >t</th>
+                            <th >ni</th>
+                            <th >qi</th>
+                            <th >ci</th>
                         </thead>
                         <tbody>
                             {%for r in tabla_pesos:%}
                             <tr>
                                 {%for el in r:%}
-                                <td style="border: 1px solid black;
-                                    padding: 8px;
-                                    text-align: left;">{{el}}</td>
+                                <td >{{el}}</td>
                                 {%endfor%}
                             </tr>
                             {%endfor%}
                         </tbody>
                     </table>
                     {%else:%}
-                    <h4>NO HAY</h4>
+                    <h4>No existe informacion suficiente para calcular</h4>
                     {%endif%}
                 </div>
             </div>
