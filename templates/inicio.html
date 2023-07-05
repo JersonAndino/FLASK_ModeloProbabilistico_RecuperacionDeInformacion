@@ -26,7 +26,7 @@
 <div class="row">
     {%if sim:%}
     <h4 class="text-center">Resultados para la consulta: "{{consulta}}"</h4>
-    <h5 class="text-center">Tiempo de respuesta: {{tiempo}} nanosegundos</h5>
+    <h5 class="text-center">Tiempo de respuesta: {{tiempo}} segundos</h5>
     <div class="col-md-6">
         <div style="padding:50px;">
             <h3>TABLA DE SIMILITUD</h3>
@@ -55,9 +55,11 @@
                     <th >Nuevo orden</th>
                 </thead>
                 <tbody>
-                    {%for p in orden_docs:%}
+                    {%for row in orden_docs:%}
                     <tr>
-                        <th> d{{p+1}}</th>
+                        {%for el in row:%}
+                        <th>{{el}}</th>
+                        {%endfor%}
                     </tr>
                     {%endfor%}
                 </tbody>
