@@ -8,6 +8,8 @@ from werkzeug.utils import secure_filename
 import os
 from math import log
 import time
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
 
 
 # Crear la carpeta 'uploaded_files' si no existe
@@ -27,27 +29,27 @@ qi=[]
 ci=[]
 
 def limpiar_doc(documento):
-    """_summary_
-    author: Jerson Andino
+    """
     Args:
-        documento (string): Recibe como parametro el texto del documento ingresadi por teclado o desde archivo
+        documento (string): Recibe como parametro el texto del documento ingresado por teclado o desde archivo
 
     Returns:
         doc: retorna una lista que contiene las palabras del documento sin stop_words y separada por espacios.
     """
+    # Definimos las stopwords en español
+    stop_words = set(stopwords.words('spanish'))
+    # Convertimos todo el documento a minúsculas
     documento=documento.lower()
-    doc = documento.split()
-    for i,word in enumerate(doc):
-        if word.lower() in stop_words:
-            doc.pop(i)
-    for i,word in enumerate(doc):
-        if word.lower() in stop_words:
-            doc.pop(i)
-    return doc
+    # Usamos un tokenizador que separa las palabras y los signos de puntuación
+    doc = word_tokenize(documento)
+    # Creamos una nueva lista de palabras que no son stopwords ni signos de puntuación
+    doc = [word for word in doc if word.isalpha() and word not in stop_words]
+    print(doc)
+    return  doc
+
 
 def vectorizar(documento,V):
-    """_summary_
-    author: Jerson Andino
+    """
     Args:
         documento (string): documento limpio perteneciente a la consulta
         V (lista): el lexico correspondiente a los documentos cargados al sistema
@@ -67,7 +69,6 @@ def vectorizar(documento,V):
 def calcular_v(documentos_limpios):
     """Calcula el lexico actual respectoa los documentos cargados de forma iterativa
     
-    author: Jerson Andino
     Args:
         documentos_limpios (lista): una lista de documentos después de haber pasado por el proceso de limpieza
     """

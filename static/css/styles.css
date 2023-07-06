@@ -4,16 +4,23 @@ body {
     padding: 0;
     background-color: #f4f4f4;
 }
+main{
+    margin: 0;
+    padding-left: 25px;
+    padding-right: 25px;
+}
 
-.box-doc{
+.col-md-6 .box-doc {
     border: 1px solid rgb(66, 66, 66);
     border-radius: 10px;
     border-right: 0;
     margin-top: 10px;
 }
-.box-doc p{
-    padding:10px;
+
+.box-doc p {
+    padding: 10px;
 }
+
 .container {
     width: 80%;
     margin: auto;
@@ -23,9 +30,15 @@ body {
 header {
     background: #35424a;
     color: white;
-    padding-top: 30px;
+    padding: 15px;
     min-height: 70px;
     border-bottom: #e8491d 3px solid;
+}
+
+header h1 {
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
 }
 
 header a {
@@ -59,7 +72,8 @@ header nav {
     margin-top: 10px;
 }
 
-header .highlight, header .current a {
+header .highlight,
+header .current a {
     color: #e8491d;
     font-weight: bold;
     height: auto;
@@ -92,3 +106,37 @@ h1 {
 button:hover {
     background-color: #45a049;
 }
+
+
+footer {
+    background: #35424a;
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+    border-top: #e8491d 3px solid;
+}
+
+footer p {
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+}
+
+footer a {
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+footer a:hover {
+    color: #cccccc;
+}
+
+.box-doc-right {
+    border-right: 1px solid rgb(66, 66, 66);
+}
+
+.btn-success {
+    background-color: #4CAF50; /* Cambia el color a tu preferencia */
+  }
+  
