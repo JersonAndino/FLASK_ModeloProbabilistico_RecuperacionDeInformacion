@@ -1,0 +1,26 @@
+ 
+No hacer tonteras en GitHub
+
+#Para clonarte el proyecto, vas a la siguiente URL
+#Omitir <> en todos los comandos y rempazar por lo que dice
+https://github.com/Afkerian/Globtech-FrontEnd
+# pones en el Git Bash el siguiente comando
+
+git clone <link>
+
+# Una vez que se termine de clonar te cambias a tu rama con el siguiente comando 
+
+git checkout <nombre>
+
+# Cuando hagas lo que tengas que hacer en el proyecto haces SIMEPRE! EN ESE ORDEN!
+
+git add .
+
+git commit -m "<mensaje de lo que hiciste en el commit, tus cambios, etc>"
+
+#pilas que el texto en el comando anterior si va entre comillas dobles
+
+git push origin <nombre>
+
+#Yo les aviso despues como bajarse los cambios de los demas, de momento trabajar sobre su rama!
+
