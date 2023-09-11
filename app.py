@@ -3,13 +3,18 @@
     :authors: Jerson Andino, Carlos Lopez, Milton Casnanzuela
     :description: A flask application for test the probabilistic method of information recovery.
 """
-from flask import Flask, request, render_template
-from werkzeug.utils import secure_filename
+
 import os
-from math import log
 import time
+
+from flask import Flask, request, render_template
+from math import log
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
+from werkzeug.utils import secure_filename
+
+
+
 
 
 # Crear la carpeta 'uploaded_files' si no existe
@@ -27,6 +32,10 @@ frecuencias=[]
 ni=[]
 qi=[]
 ci=[]
+ci_ciega = []
+qi_ciega = []   
+pi_ciega = []
+
 
 def limpiar_doc(documento):
     """
@@ -115,6 +124,7 @@ def calcular_ni(frecuencias,V):
             if d[i]>0:
                 cont+=1
         ni.append(cont)
+        
 
 def calcular_qi(ni):
     """Calculo del elemento qi en la tabla de similitud
@@ -230,6 +240,59 @@ def consultar_q(frecuencias, ci, q):
         sim.append(abs(sum(d)))
     sim_copy=sim.copy()    
     return (sim, ordenar_sim(sim_copy))      
+
+def calcular_pi_ciega(ni, num_total_docs, num_docs_rel):
+    pi_ciega.clear()
+    for n in ni:
+        pi_ciega.append(
+            ( num_docs_rel / num_total_docs)
+        )
+    return pi_ciega
+def calcular_qi_ciega(ni, num_total_docs, num_docs_rel):
+    ni_ciega.clear()
+    for n in ni:
+        ni_ciega.append(
+            (n / num_total_docs)
+        )
+    return ni_ciega
+def calcular_ci_ciega(ni, num_total_docs, num_docs_rel):
+     for n in ni:
+        ci_ciega.append(
+            log(((num_docs_rel + 0.5) / (num_total_docs - num_docs_rel + 0.5))/((ni - num_docs_rel + 0.5)/(num_total_docs - ni + 0.5 )), 10)
+        )
+
+def calcular_tabla_ciega(num_total_docs, num_docs_rel):
+    """Union de todas las tablas pertinentes calculadas para armar la tabla de similitud
+
+    Args:
+        
+
+    Returns:
+        tabla_pesos: una lista compuesta de distintos valores, cada fila contiene los valores pertinentes a todas las tablas
+    """
+    tabla_pesos=[]
+    try:
+        if len(documentos)>1:
+            calcular_v(documentos_limpios)
+            calcular_frecuencias(documentos_limpios,V)
+            calcular_pi_ciega(ni, num_total_docs, num_docs_rel)
+            calcular_qi_ciega(ni, num_total_docs, num_docs_rel)
+            calcular_ci_ciega(ni, num_total_docs, num_docs_rel)
+            for i,v in enumerate(V):
+                d_temp=[]
+                d_temp.append(v)
+                d_temp.append('t'+str(i+1))
+                d_temp.append(ni[i])
+                d_temp.append(pi_ciega[i])
+                d_temp.append(qi_ciega[i])
+                d_temp.append(ci_ciega[i])
+                tabla_pesos.append(d_temp)
+        else:
+            pass
+    except Exception as e:
+        print(e)
+        pass
+    return tabla_pesos
     
 @app.route('/', methods=['GET', 'POST'])
 def home():
@@ -304,6 +367,34 @@ def cargar_documento():
     content['V']=V
     
     return render_template('cargar_documento.html', **content)
+
+@app.route('/retroalimentacion', methods=['GET', 'POST'])
+def retroalimentacion():
+    content=dict()
+    content['ed']=len(documentos)
+    content['docs']=documentos
+    content['V']=V
+    content['frecuencias']=frecuencias
+    content['ni']=ni
+    option = ['SELECCIONAR OPCION', 'ES RELEVANTE', 'NO ES RELEVANTE']
+    
+    if request.method == 'POST':
+            docs_recuperados= request.form.getlist('relevancia')
+            num_total_docs = len(docs_recuperados)
+            num_docs_relevantes = len([doc for doc in docs_recuperados if doc == 'ES RELEVANTE'])
+            if not ci:
+                content['not_ready']=True
+            else:
+                tabla_pesos_ciega = calcular_tabla_ciega(num_total_docs, num_docs_relevantes)
+                content['tabla_pesos_ciega']=tabla_pesos_ciega
+            
+
+
+    content['ed']=len(documentos)
+    content['docs']=documentos
+    content['V']=V
+    return render_template('retroalimentacion.html', option=option, **content)
+
 
 @app.route('/calcular', methods=['GET'])
 def calcular():

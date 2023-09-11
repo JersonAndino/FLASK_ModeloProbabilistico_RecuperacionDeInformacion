@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="content">
+
+
+<div class="row">
+
+    <div class="col-md-6">
+        <div style="padding:50px;">
+            <h3>
+                DOCUMENTOS
+            </h3>
+            {%if ed == 0:%}
+            <h4>No hay documentos cargados</h4>
+            {% else %}
+            {%for doc in docs%}
+
+            <form method="POST" enctype="multipart/form-data">
+                <div>
+                    <input type="hidden" value="{{loop.index}}" id="doc_index" name="doc_index">
+                    <input type="hidden" value="1" id="tipo_post" name="tipo_post">
+                </div>
+                <div class="form-group" style="display: flex; width:600px; background-color: #f4f4f4;" class="box-doc">
+                    <div style="max-height: 150px; overflow-y: auto;">
+                        <p style="width:600px;">{{doc}}</p>
+                    </div>
+                    <select id="relevancia" class="form-select" aria-label="Default select example" name="relevancia" >
+                        <option value="{{option[0]}}" selected>{{option[0]}}</option>
+                        {% for option in option[1:] %}
+                          <option value="{{option}}">{{option}}</option>
+                        {% endfor %}
+                      </select>               
+                </div>
+            {%endfor%}
+            <button type="submit" class="btn btn-primary" >Nueva Consulta</button>
+            </form>
+
+            <br>
+            <form method="POST" enctype="multipart/form-data">
+                <div>
+                    <input type="hidden" value="2" id="tipo_post" name="tipo_post">
+                </div>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+    <div class="col-md-8 box-doc mx-auto">
+
+        <div style="padding:50px;">
+            <h3>TABLA DE PESOS</h3>
+            
+                    {%if tabla_pesos:%}
+                    <div style="display: flex; width:490px;" class="box-doc">
+                        <div style=" overflow-y: auto;height: 500px;">
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <th>Palabra</th>
+                            <th>t</th>
+                            <th>ni</th>
+                            <th>qi</th>
+                            <th>ci</th>
+                        </thead>
+                        <tbody>
+                            {%for r in tabla_pesos_ciega:%}
+                            <tr>
+                                {%for el in r:%}
+                                <td>{{el}}</td>
+                                {%endfor%}
+                            </tr>
+                            {%endfor%}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+                    {%else:%}
+                    <h4>No existe informacion suficiente para calcular</h4>
+                    {%endif%}
+              
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}
