@@ -1,0 +1,12 @@
+Windows:
+
+Las librerias necesarias para su ejecucion son:
+flask
+nltk
+
+colocarse en el directorio del proyecto y ejecutar el comando en terminal para activar el entorno virtual:
+.\envri\scripts\activate
+
+una vez activado el entorno virtual de python:
+python app.py run
+
