@@ -1,22 +1,31 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Realizar consulta</h1>
+<div class="container">
 
-<form action="{{ url_for('consultar') }}" method="post">
-    <input type="text" name="consulta" required>
-    <input type="submit" value="Realizar Consulta">
-</form>
+  <div class="row text-align-center">
 
-{% if consulta %}
-<p>Realizaste una consulta: {{ consulta }}</p>
-<button onclick="goBack()">Atrás</button>
-{% endif %}
+    <h1>Realizar consulta</h1>
 
-<script>
-function goBack() {
-  window.history.back();
-}
-</script>
+  <form action="{{ url_for('consultar') }}" method="post">
+      <input type="text" name="consulta" required>
+      <input type="submit" value="Realizar Consulta">
+  </form>
+  
+  {% if consulta %}
+  <p>Realizaste una consulta: {{ consulta }}</p>
+  <button onclick="goBack()">Atrás</button>
+  {% endif %}
 
+    
+  </div>
+  <div class="row">
+
+    <script>
+      function goBack() {
+        window.history.back();
+      }
+      </script>
+  </div>
+</div>
 {% endblock %}

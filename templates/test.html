@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-md-6">
+      <!-- Primera columna con un listado de documentos con un combobox -->
+      <h3>Listado de documentos</h3>
+      {%if ed == 0:%}
+      <h4>No hay documentos cargados</h4>
+      {% else %}
+      {%for doc in docs%}
+      <form method="POST" enctype="multipart/form-data">
+          <div>
+              <input type="hidden" value="{{loop.index}}" id="doc_index" name="doc_index">
+              <input type="hidden" value="1" id="tipo_post" name="tipo_post">
+          </div>
+          
+
+          <div class="form-group">
+            <div class="card" >
+              <div class="card-header fs-5 bold fw-bolder" >
+                d{{loop.index}}
+              </div>
+              <div class="card-body">
+                <p class="card-text overflow-y-auto" style="max-height: 100px;" overflow-hidden">{{doc}}</p>
+                <select id="relevancia" class="form-select btn btn-info dropdown-toggle" aria-label="Default" name="relevancia" style="max-width:fit-content; padding-right: 40px;">
+                  <option value="{{option[0]}}" selected>{{option[0]}}</option>
+                  {% for option in option[1:] %}
+                    <option class="dropdown-item" value="{{option}}">{{option}}</option>
+                  {% endfor %}
+              </select>     
+              </div>
+            </div>
+  
+          </div>
+                        
+          
+      {%endfor%}
+      <button type="submit" class="btn btn-warning" style="margin: 20px;" >Realizar Nueva Consulta</button>
+      </form>
+
+      <br>
+      <form method="POST" enctype="multipart/form-data">
+          <div>
+              <input type="hidden" value="2" id="tipo_post" name="tipo_post">
+          </div>
+      </form>
+  </div>
+  {% endif %}
+  <div class="col-md-6 table-responsive" style="max-width: fit-content;">
+    <h2>Consulta: <span class="badge rounded-pill text-bg-primary">{{consulta}}</span></h2>
+    <h3>TABLA DE SIMILITUD</h3>
+        <table class="table table-bordered table-striped">
+            <thead>
+                <th >*</th>
+                <th >similitud</th>
+            </thead>
+            <tbody>
+            {%for s in sim:%}
+            <tr>
+            <th> d{{loop.index}}</th>
+            <td >{{s}}</td>
+                        </tr>
+                        {%endfor%}
+                    </tbody>
+          </table>
+      <h3>Tabla 2 (con scroll)</h3>
+      <!-- Usamos la clase .table-responsive para hacer que la tabla sea desplazable -->
+      <div class="table-responsive">
+        {%if tabla_pesos_ciega:%}
+        <table class="table table-bordered">
+            <thead>
+                <th>Palabra</th>
+                <th>t</th>
+                <th>ni</th>
+                <th>pi</th>
+                <th>qi</th>
+                <th>ci</th>
+            </thead>
+            <tbody>
+                {%for r in tabla_pesos_ciega:%}
+                <tr>
+                    {%for el in r:%}
+                    <td>{{el}}</td>
+                    {%endfor%}
+                </tr>
+                {%endfor%}
+            </tbody>
+        </table>
+      </div>
+      {%else:%}
+      <h4>No existe informacion suficiente para mostrar</h4>
+      {%endif%}
+
+          <!-- Tercera tabla -->
+      <!-- Usamos la misma estructura que la primera tabla -->
+      <!-- Cambiamos los datos según tu preferencia -->
+
+      <!-- ... -->
+  </div>
+  
+
+
+  </div>
+  </div>
+{% endblock %}

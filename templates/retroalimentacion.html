@@ -46,11 +46,18 @@
         {% endif %}
     </div>
     <div class="col-md-8 box-doc mx-auto">
+        {%if consulta:%}
+        <h5>Resultados para la consulta: <span class="badge rounded-pill text-bg-primary">{{consulta}}</span></h5>
+        {%else:%}
+        <h4>No existe informacion suficiente para calcular</h4>
+        {%endif%}
 
         <div style="padding:50px;">
             <h3>TABLA DE PESOS</h3>
-            
-                    {%if tabla_pesos:%}
+                    <h1>{{num_total_docs}}</h1>
+                    <h1>{{num_docs_relevantes}}</h1>
+
+                    {%if tabla_pesos_ciega:%}
                     <div style="display: flex; width:490px;" class="box-doc">
                         <div style=" overflow-y: auto;height: 500px;">
                     <table class="table table-bordered table-striped">
@@ -58,6 +65,7 @@
                             <th>Palabra</th>
                             <th>t</th>
                             <th>ni</th>
+                            <th>pi</th>
                             <th>qi</th>
                             <th>ci</th>
                         </thead>
@@ -74,7 +82,7 @@
                 </div>
             </div>
                     {%else:%}
-                    <h4>No existe informacion suficiente para calcular</h4>
+                    <h4>No existe informacion suficiente para calcular o no existen documentos cargados</h4>
                     {%endif%}
               
         </div>

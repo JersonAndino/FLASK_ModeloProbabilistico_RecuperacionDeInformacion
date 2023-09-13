@@ -1,74 +1,84 @@
 {% extends "base.html" %}
-
 {% block content %}
-<h1 class="text-center">REALIZA UNA CONSULTA</h1>
-<!--<p>Aquí puedes cargar documentos, calcular frecuencias y relevancias y consultar documentos similares.</p>-->
-<div>
-    <div class="m-auto" style="padding:50px; margin:auto;">
-        <form method="POST" enctype="multipart/form-data">
-            <input type="hidden" value="3" id="tipo_post" name="tipo_post">
-            <br>
-            <div>
-                <label for="consulta">Realizar consulta:</label>
-                <input style="width: 200px;" type="text" id="consulta" name="consulta" class="form-control">
-            </div>
-            <br>
-            <input class="btn btn-primary" type="submit" value="Buscar">
-        </form>
-        <br>
-        {%if not_ready:%}
-        <div class="card">
-            <h4>No existe informacion suficiente para realizar una consulta</h4>
-        </div>
-        {%endif%}
-    </div>
-</div>
-<div class="row">
-    {%if sim:%}
-    <h4 class="text-center">Resultados para la consulta: "{{consulta}}"</h4>
-    <h5 class="text-center">Tiempo de respuesta: {{tiempo}} segundos</h5>
-    <div class="col-md-6">
-        <div style="padding:50px;">
-            <h3>TABLA DE SIMILITUD</h3>
-            <table class="table table-bordered table-striped">
-                <thead>
-                    <th ></th>
-                    <th >sim</th>
-                </thead>
-                <tbody>
-                    {%for s in sim:%}
-                    <tr>
-                        <th> d{{loop.index}}</th>
-                        
-                        <td >{{s}}</td>
-                    </tr>
-                    {%endfor%}
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div style="padding:50px;">
-            <h3>ORDEN DE RELEVANCIA DE DOCUMENTOS</h3>
-            <table class="table table-bordered table-striped">
-                <thead>
-                    <th >Nuevo orden</th>
-                </thead>
-                <tbody>
-                    {%for row in orden_docs:%}
-                    <tr>
-                        {%for el in row:%}
-                        <th>{{el}}</th>
-                        {%endfor%}
-                    </tr>
-                    {%endfor%}
-                </tbody>
-            </table>
-        </div>
-    </div>
-    {%endif%}
-</div>
+<div class="container">
+    <div class="row">
+        <div class="m-auto" style="padding:50px; margin:auto;">
+            <form method="POST" enctype="multipart/form-data">
+                <input type="hidden" value="3" id="tipo_post" name="tipo_post">
+                <br>
+                <div>
+                    <label for="consulta">Realizar consulta:</label>
+                    <input type="text" id="consulta" name="consulta" class="form-control rounded" placeholder="Ingrese su Consulta" aria-label="Search" aria-describedby="search-addon" />
 
-<br>
+                </div>
+                <br>
+                <button class="btn btn-primary" type="submit" type="button" class="btn btn-primary">
+                    <i class="fas fa-search"></i> | Buscar
+                </button>
+            </form>
+            <br>
+            {%if not_ready:%}
+            <span class="badge rounded-pill text-bg-danger">
+                No existe informacion suficiente para realizar una consulta o no hay documentos cargados
+            </span>
+            {%endif%}
+        </div>
+    </div>
+    {%if sim:%}
+    <div class=“row”> 
+        <div class=“col-8”> 
+            <h2>Resultados para la consulta: <span class="badge rounded-pill text-bg-primary">{{consulta}}</span></h2>
+            <p class=“text-muted”>Tiempo de respuesta: {{tiempo}} segundos</p> 
+        </div> 
+    </div> 
+    <div class=“row"> 
+        <div class="col-xs-6 table-responsive" style="padding:10px; max-width:fit-content; display:inline-table;">
+                <h3>TABLA DE SIMILITUD</h3>
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <th ></th>
+                        <th >sim</th>
+                    </thead>
+                    <tbody>
+                        {%for s in sim:%}
+                        <tr>
+                            <th> d{{loop.index}}</th>
+                            <td >{{s}}</td>
+                        </tr>
+                        {%endfor%}
+                    </tbody>
+                </table>
+        </div>
+        <div class=""></div>
+        <div class="col-xs-6 table-responsive" style="padding:10px; max-width:fit-content; display:inline-table;">
+                <h3>ORDEN DE RELEVANCIA DE DOCUMENTOS</h3>
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <th >Nuevo orden</th>
+                    </thead>
+                    <tbody>
+                        {%for row in orden_docs:%}
+                        <tr>
+                            {%for el in row:%}
+                            <th>{{el}}</th>
+                            {%endfor%}
+                        </tr>
+                        {%endfor%}
+                    </tbody>
+                </table>
+        </div>
+    <div class="row">
+        <div class="col-6">            
+            <form method="POST" enctype="multipart/form-data" >
+                <input type="hidden" value="4" id="tipo_post" name="tipo_post">
+                <button type="submit" class="btn btn-success" style="padding: 5px;">Realizar Retroalimentacion</button>
+            </form>
+            
+        
+    </div>
+    </div> 
+
+</div>
+{%endif%}
 
 {% endblock %}

@@ -26,11 +26,7 @@ main{
     padding: 10px;
 }
 
-.container {
-    width: 80%;
-    margin: auto;
-    overflow: hidden;
-}
+
 
 header {
     background: #35424a;

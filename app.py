@@ -7,7 +7,7 @@
 import os
 import time
 
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, redirect, url_for, session
 from math import log
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
@@ -35,7 +35,7 @@ ci=[]
 ci_ciega = []
 qi_ciega = []   
 pi_ciega = []
-
+ri_ciega=0
 
 def limpiar_doc(documento):
     """
@@ -53,7 +53,7 @@ def limpiar_doc(documento):
     doc = word_tokenize(documento)
     # Creamos una nueva lista de palabras que no son stopwords ni signos de puntuación
     doc = [word for word in doc if word.isalpha() and word not in stop_words]
-    print(doc)
+    # print(doc)
     return  doc
 
 
@@ -191,6 +191,8 @@ def ordenar_sim(sim):
     """
     orden=list(range(len(sim)))
     nuevo_orden=[]
+    valores = sim.copy()
+    valores.sort(reverse=True)
     for i in range(len(sim)):
         max=sim[0]
         maxi=0
@@ -198,14 +200,16 @@ def ordenar_sim(sim):
             if sim[j]>max:
                 max=sim[j]
                 maxi=j
+        
         sim.pop(maxi)
         nuevo_orden.append(orden[maxi])
         orden.pop(maxi)
         
     tabla_orden=[]
+    print(valores)
     for p in nuevo_orden:
         tabla_orden.append(['d'+str(p+1),nombres_docs[p]])
-    
+   
     return tabla_orden
 
 def consultar_q(frecuencias, ci, q):
@@ -230,8 +234,8 @@ def consultar_q(frecuencias, ci, q):
     producto_interno_pesos=[]    
     for d in producto_interno:
         d_temp=[]
-        print(d)
-        print(ci)
+        # print(d)
+        # print(ci)
         for i in range(n):
             d_temp.append(d[i]*ci[i])
         producto_interno_pesos.append(d_temp)  
@@ -243,41 +247,39 @@ def consultar_q(frecuencias, ci, q):
 
 def calcular_pi_ciega(ni, num_total_docs, num_docs_rel):
     pi_ciega.clear()
+    print(f"La pi_ciega es {  num_docs_rel / num_total_docs }")
+
     for n in ni:
         pi_ciega.append(
             ( num_docs_rel / num_total_docs)
         )
-    return pi_ciega
-def calcular_qi_ciega(ni, num_total_docs, num_docs_rel):
-    ni_ciega.clear()
+def calcular_qi_ciega(ni, ri_ciega, num_total_docs, num_docs_rel):
+    qi_ciega.clear()
     for n in ni:
-        ni_ciega.append(
-            (n / num_total_docs)
+        qi_ciega.append(
+            (ni[n]- ri_ciega / num_total_docs - num_docs_rel )
         )
-    return ni_ciega
-def calcular_ci_ciega(ni, num_total_docs, num_docs_rel):
+
+def calcular_ci_ciega(ni, ri_ciega, num_total_docs, num_docs_rel):
      for n in ni:
-        ci_ciega.append(
-            log(((num_docs_rel + 0.5) / (num_total_docs - num_docs_rel + 0.5))/((ni - num_docs_rel + 0.5)/(num_total_docs - ni + 0.5 )), 10)
-        )
-
-def calcular_tabla_ciega(num_total_docs, num_docs_rel):
-    """Union de todas las tablas pertinentes calculadas para armar la tabla de similitud
-
-    Args:
+        valor =  ((ri_ciega + 0.5) / ( num_docs_rel - ri_ciega + 0.5))/((ni[n] - ri_ciega + 0.5)/(num_total_docs -num_docs_rel - ni[n] + ri_ciega + 0.5 ))
+        if(valor > 0):
+               ci_ciega.append(log(valor, 10))
+        else:
+                valor = 0
+                ci_ciega.append(valor)
         
 
-    Returns:
-        tabla_pesos: una lista compuesta de distintos valores, cada fila contiene los valores pertinentes a todas las tablas
-    """
-    tabla_pesos=[]
+def calcular_tabla_ciega(ni, ri_ciega, num_total_docs, num_docs_rel):
+
+    tabla_pesos_ciega=[]
     try:
         if len(documentos)>1:
             calcular_v(documentos_limpios)
             calcular_frecuencias(documentos_limpios,V)
             calcular_pi_ciega(ni, num_total_docs, num_docs_rel)
-            calcular_qi_ciega(ni, num_total_docs, num_docs_rel)
-            calcular_ci_ciega(ni, num_total_docs, num_docs_rel)
+            calcular_qi_ciega(ni, ri_ciega, num_total_docs, num_docs_rel)
+            calcular_ci_ciega(ni, ri_ciega, num_total_docs, num_docs_rel)
             for i,v in enumerate(V):
                 d_temp=[]
                 d_temp.append(v)
@@ -286,13 +288,13 @@ def calcular_tabla_ciega(num_total_docs, num_docs_rel):
                 d_temp.append(pi_ciega[i])
                 d_temp.append(qi_ciega[i])
                 d_temp.append(ci_ciega[i])
-                tabla_pesos.append(d_temp)
+                tabla_pesos_ciega.append(d_temp)
         else:
             pass
     except Exception as e:
         print(e)
         pass
-    return tabla_pesos
+    return tabla_pesos_ciega
     
 @app.route('/', methods=['GET', 'POST'])
 def home():
@@ -308,10 +310,18 @@ def home():
                 (sim, orden_docs) = consultar_q(frecuencias,ci,q)
                 fin = time.time_ns()
                 content['sim']=sim
-                content['orden_docs']=orden_docs    
+                ri_ciega = len([s for s in sim if s != 0])
+                print(sim)
+                print("@@@@@@@@@@@@@@@@@@@")
+                print(orden_docs)
+                content['orden_docs']=orden_docs   
                 content['consulta'] = consulta   
-                content['tiempo'] = (fin-inicio)/10**(9)        
-            
+                content['tiempo'] = (fin-inicio)/10**(9) 
+        if request.form['tipo_post']=='4':
+            consulta=request.form['consulta']
+            (sim, orden_docs) = consultar_q(frecuencias,ci,q)
+            print(sim)
+            return redirect((url_for('test', consulta=consulta, sim=sim)))             
     calcular_v(documentos_limpios)
     calcular_frecuencias(documentos_limpios,V)
     calcular_ni(frecuencias,V)
@@ -322,7 +332,6 @@ def home():
     content['frecuencias']=frecuencias
     content['ni']=ni
     content['tabla_pesos']=tabla_pesos
-            
     return render_template('inicio.html',**content)
 
 @app.route('/cargar_documento', methods=['GET', 'POST'])
@@ -371,21 +380,26 @@ def cargar_documento():
 @app.route('/retroalimentacion', methods=['GET', 'POST'])
 def retroalimentacion():
     content=dict()
+    content['consulta'] = request.args.get('consulta')
+    print()
     content['ed']=len(documentos)
     content['docs']=documentos
     content['V']=V
     content['frecuencias']=frecuencias
     content['ni']=ni
     option = ['SELECCIONAR OPCION', 'ES RELEVANTE', 'NO ES RELEVANTE']
-    
     if request.method == 'POST':
             docs_recuperados= request.form.getlist('relevancia')
             num_total_docs = len(docs_recuperados)
             num_docs_relevantes = len([doc for doc in docs_recuperados if doc == 'ES RELEVANTE'])
+            content['num_total_docs']=num_total_docs
+            content['num_docs_relevantes']=num_docs_relevantes
             if not ci:
                 content['not_ready']=True
             else:
-                tabla_pesos_ciega = calcular_tabla_ciega(num_total_docs, num_docs_relevantes)
+                print(type(len(ni)),type(ri_ciega),type(num_total_docs),type(num_docs_relevantes))
+                tabla_pesos_ciega = calcular_tabla_ciega(ni, ri_ciega, num_total_docs, num_docs_relevantes)
+                print(tabla_pesos_ciega)
                 content['tabla_pesos_ciega']=tabla_pesos_ciega
             
 
@@ -394,6 +408,8 @@ def retroalimentacion():
     content['docs']=documentos
     content['V']=V
     return render_template('retroalimentacion.html', option=option, **content)
+
+
 
 
 @app.route('/calcular', methods=['GET'])
@@ -407,6 +423,37 @@ def calcular():
     content['ni']=ni
     content['tabla_pesos']=tabla_pesos
     return render_template('calcular.html', **content)
+
+@app.route('/test', methods=['GET', 'POST'])
+def test():
+    content=dict()
+    content['consulta'] = request.args.get('consulta')
+    content['ed']=len(documentos)
+    content['docs']=documentos
+    content['V']=V
+    content['frecuencias']=frecuencias
+    content['ni']=ni
+    option = ['SELECCIONAR OPCION', 'ES RELEVANTE', 'NO ES RELEVANTE']
+    if request.method == 'POST':
+            docs_recuperados= request.form.getlist('relevancia')
+            num_total_docs = len(docs_recuperados)
+            num_docs_relevantes = len([doc for doc in docs_recuperados if doc == 'ES RELEVANTE'])
+            content['num_total_docs']=num_total_docs
+            content['num_docs_relevantes']=num_docs_relevantes
+            if not ci:
+                content['not_ready']=True
+            else:
+                print(type(len(ni)),type(ri_ciega),type(num_total_docs),type(num_docs_relevantes))
+                tabla_pesos_ciega = calcular_tabla_ciega(ni, ri_ciega, num_total_docs, num_docs_relevantes)
+                print(tabla_pesos_ciega)
+                content['tabla_pesos_ciega']=tabla_pesos_ciega
+            
+
+
+    content['ed']=len(documentos)
+    content['docs']=documentos
+    content['V']=V
+    return render_template('test.html', option=option, **content)
 
 if __name__ == '__main__':
     app.run(debug=True)
